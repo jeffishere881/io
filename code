@@ -1,0 +1,131 @@
+local Library = loadstring(game: HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Techie Tribe", "LightTheme")
+
+-- Tabs
+local Tab = Window:NewTab("Auto ")
+local Section1 = Tab:NewSection("Auto Clicker")
+
+-- Button to start the auto-clicker
+Section1:NewButton("Auto clicker", "clicks your left mouse button", function()
+    -- Auto Clicker Script for Roblox
+    -- Use responsibly and at your own risk.
+
+    -- Services
+    local VirtualUser = game:GetService("VirtualUser")
+
+    -- Function to simulate a mouse click
+    local function click()
+        VirtualUser:Button1Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+        wait(0.01)-- Short delay to ensure the click is registered
+        VirtualUser:Button1Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+    end
+
+    -- Loop to repeatedly click every 0.1 seconds(adjustable)
+    while true do
+            click()
+        wait(0.1)-- Wait 0.1 seconds before the next click
+    end
+end)
+
+local Section2 = Tab:NewSection("Auto Rebirth")
+Section2: NewToggle("Auto Rebirth", "Automaticly rebirths for you", function(state)
+    -- Auto Rebirth Script for Roblox
+    -- Use responsibly and at your own risk.
+
+    -- Services
+    local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local Workspace = game:GetService("Workspace")
+
+    -- Player
+    local player = Players.LocalPlayer
+
+    -- Function to find the RebirthEvent
+    local function findRebirthEvent()
+        local rebirthEvent
+
+        -- Check ReplicatedStorage
+        rebirthEvent = ReplicatedStorage:FindFirstChild("RebirthEvent")
+        if rebirthEvent then
+            print("RebirthEvent found in ReplicatedStorage")
+            return rebirthEvent
+        end
+
+        -- Check Workspace
+        rebirthEvent = Workspace:FindFirstChild("RebirthEvent")
+        if rebirthEvent then
+            print("RebirthEvent found in Workspace")
+            return rebirthEvent
+        end
+
+        -- Check Player
+        rebirthEvent = player:FindFirstChild("RebirthEvent")
+        if rebirthEvent then
+            print("RebirthEvent found in Player")
+            return rebirthEvent
+        end
+
+        -- Check other potential locations as needed
+
+        warn("RebirthEvent not found!")
+        return nil
+    end
+
+    -- Function to auto rebirth
+    local function autoRebirth()
+        print("Auto rebirth function started")
+
+        -- Find the rebirth event
+        local rebirthEvent = findRebirthEvent()
+        if not rebirthEvent then
+            return
+        end
+
+        while true do
+            -- Check if the player meets the rebirth criteria (adjust this check according to your game's requirements)
+            local canRebirth = player:FindFirstChild("leaderstats") and player.leaderstats: FindFirstChild("Level") and player.leaderstats.Level.Value >= 50
+
+            if canRebirth then
+                -- Trigger rebirth event
+                rebirthEvent:FireServer()
+                print("Rebirth triggered!")
+            end
+
+            -- Adjust the delay according to your needs
+            wait(1)
+        end
+    end
+
+    -- Start or stop auto rebirth based on the toggle state
+    if state then
+        autoRebirth()
+        print("Toggle On")
+    else
+        print("Toggle Off")
+    end
+end)
+
+    --player tab
+local Tab = Window:NewTab("Player")
+local Section = Tab:NewSection("Speed")
+Section: NewSlider("Speed mixer", "Adjusts player speed", 120, 15, function(s)-- 120(MaxValue) | 15(MinValue)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
+end)
+    local Section = Tab:NewSection("Field of view")
+
+-- Create a FOV slider under the "Field of view" section
+Section:NewSlider("Field of view", "Adjusts player FOV", 120, 15, function(value)
+    -- Adjust FOV within the range of 15 to 120
+    local clampedFOV = math.clamp(value, 15, 120)
+
+    -- Set the camera's field of view
+    game.Workspace.CurrentCamera.FieldOfView = clampedFOV
+end)
+
+-- Function to toggle UI
+local function toggleUI()
+    Library:ToggleUI()
+end
+
+-- Create a keybind to toggle the UI using the "Insert" key
+Section:NewKeybind("Toggle UI", "Press Insert to toggle UI", Enum.KeyCode.Insert, toggleUI)
